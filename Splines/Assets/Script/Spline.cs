@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class Spline : MonoBehaviour
 {
-    [SerializeField] private GameObject[] m_SplinePoints;
-    [SerializeField] private ECurveType m_CurveType;
+    [SerializeField] public Vector3[] m_SplinePoints;
+    [SerializeField] public ECurveType m_CurveType;
 
     [SerializeField] private GameObject m_MovingGO;
     

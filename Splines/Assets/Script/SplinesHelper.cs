@@ -21,26 +21,27 @@ public class SplinesHelper
         {   1,  0,  0,  0   }
     };
 
-    public static Vector3 ComputeHermite(float pT, GameObject[] pSplinePoints)
+    public static Vector3 ComputeHermite(float pT, Vector3[] pControls)
     {
-        float[,] T = MatrixT(pT, pSplinePoints);
+        int degree = pControls.Length - 1;
+        float[,] T = MatrixT(pT, degree);
         float[,] M = M_Hermite;
 
         float[,] matrix_TM = 
             MultiplyMatrices(T, M);
         float[,] matrix_TMG = 
-            MultiplyMatrices(matrix_TM, HermiteControlPoints(pSplinePoints));
+            MultiplyMatrices(matrix_TM, HermiteControlPoints(pControls));
 
         return new(matrix_TMG[0, 0], matrix_TMG[0, 1], matrix_TMG[0, 2]);
     }
 
-    static float[,] HermiteControlPoints(GameObject[] pSplinePoints)
+    static float[,] HermiteControlPoints(Vector3[] pControls)
     {
-        Vector3 entry = pSplinePoints.First().transform.position;
-        Vector3 exit = pSplinePoints.Last().transform.position;
+        Vector3 entry = pControls.First();
+        Vector3 exit = pControls.Last();
 
-        Vector3 entryTangent = pSplinePoints[1].transform.position;
-        Vector3 exitTangent = pSplinePoints[pSplinePoints.Length - 2].transform.position;
+        Vector3 entryTangent = pControls[1];
+        Vector3 exitTangent = pControls[pControls.Length - 2];
 
         Vector3 R1 = entryTangent - entry;
         Vector3 R2 = exitTangent - exit;
@@ -66,26 +67,27 @@ public class SplinesHelper
         {   1,  0,  0,  0   }
     };
 
-    public static Vector3 ComputeBézierCurve(float pT, GameObject[] pSplinePoints)
+    public static Vector3 ComputeBézierCurve(float pT, Vector3[] pControls)
     {
-        float[,] T = MatrixT(pT, pSplinePoints);
+        int degree = pControls.Length - 1;
+        float[,] T = MatrixT(pT, degree);
         float[,] M = M_Bézier;
 
         float[,] matrix_TM = 
             MultiplyMatrices(T, M);
         float[,] matrix_TMG = 
-            MultiplyMatrices(matrix_TM, BézierControlPoints(pSplinePoints));
+            MultiplyMatrices(matrix_TM, BézierControlPoints(pControls));
 
         return new(matrix_TMG[0, 0], matrix_TMG[0, 1], matrix_TMG[0, 2]);
     }
 
-    static float[,] BézierControlPoints(GameObject[] pSplinePoints)
+    static float[,] BézierControlPoints(Vector3[] pControls)
     {
-        float[,] controlPoints = new float[pSplinePoints.Length, 3];
+        float[,] controlPoints = new float[pControls.Length, 3];
 
-        for (int i = 0; i < pSplinePoints.Length; i++)
+        for (int i = 0; i < pControls.Length; i++)
         {
-            Vector3 pos = pSplinePoints[i].transform.position;
+            Vector3 pos = pControls[i];
 
             controlPoints[i, 0] = pos.x;
             controlPoints[i, 1] = pos.y;
@@ -105,28 +107,29 @@ public class SplinesHelper
         {   1,  4,  1,  0   }
     };
 
-    public static Vector3 ComputeBSplineCurve(float pT, GameObject[] pSplinePoints)
+    public static Vector3 ComputeBSplineCurve(float pT, Vector3[] pControls)
     {
-        float[,] T = MatrixT(pT, pSplinePoints);
+        int degree = pControls.Length - 1;
+        float[,] T = MatrixT(pT, degree);
         float[,] M = M_B_Spline;
 
         float[,] matrix_TM =
             MultiplyMatrices(T, M);
         float[,] matrix_TMG =
-            MultiplyMatrices(matrix_TM, BSplineControlPoints(pSplinePoints));
+            MultiplyMatrices(matrix_TM, BSplineControlPoints(pControls));
 
         Vector3 result = new(matrix_TMG[0, 0], matrix_TMG[0, 1], matrix_TMG[0, 2]);
 
-        return result / 6;
+        return result / 6f;
     }
 
-    static float[,] BSplineControlPoints(GameObject[] pSplinePoints)
+    static float[,] BSplineControlPoints(Vector3[] pControls)
     {
-        float[,] controlPoints = new float[pSplinePoints.Length, 3];
+        float[,] controlPoints = new float[pControls.Length, 3];
 
-        for (int i = 0; i < pSplinePoints.Length; i++)
+        for (int i = 0; i < pControls.Length; i++)
         {
-            Vector3 pos = pSplinePoints[i].transform.position;
+            Vector3 pos = pControls[i];
 
             controlPoints[i, 0] = pos.x;
             controlPoints[i, 1] = pos.y;
@@ -146,28 +149,29 @@ public class SplinesHelper
         {   0,  2,  0,  0   }
     };
 
-    public static Vector3 ComputeCatmullRomCurve(float pT, GameObject[] pSplinePoints)
+    public static Vector3 ComputeCatmullRomCurve(float pT, Vector3[] pControls)
     {
-        float[,] T = MatrixT(pT, pSplinePoints);
+        int degree = pControls.Length - 1;
+        float[,] T = MatrixT(pT, degree);
         float[,] M = M_Catmull_Rom;
 
         float[,] matrix_TM =
             MultiplyMatrices(T, M);
         float[,] matrix_TMG =
-            MultiplyMatrices(matrix_TM, CatmullRomControlPoints(pSplinePoints));
+            MultiplyMatrices(matrix_TM, CatmullRomControlPoints(pControls));
 
         Vector3 result = new(matrix_TMG[0, 0], matrix_TMG[0, 1], matrix_TMG[0, 2]);
 
-        return result / 2;
+        return result / 2f;
     }
 
-    static float[,] CatmullRomControlPoints(GameObject[] pSplinePoints)
+    static float[,] CatmullRomControlPoints(Vector3[] pControls)
     {
-        float[,] controlPoints = new float[pSplinePoints.Length, 3];
+        float[,] controlPoints = new float[pControls.Length, 3];
 
-        for (int i = 0; i < pSplinePoints.Length; i++)
+        for (int i = 0; i < pControls.Length; i++)
         {
-            Vector3 pos = pSplinePoints[i].transform.position;
+            Vector3 pos = pControls[i];
 
             controlPoints[i, 0] = pos.x;
             controlPoints[i, 1] = pos.y;
@@ -178,18 +182,16 @@ public class SplinesHelper
     }
     #endregion
 
-    static float[,] MatrixT(float pT, GameObject[] pSplinePoints)
+    static float[,] MatrixT(float pT, int pDegree)
     {
-        int splineDegree = pSplinePoints.Length - 1;
-
-        float[,] matrixT = new float[1, pSplinePoints.Length];
-        for (int i = 0; i < splineDegree; ++i)
+        float[,] matrixT = new float[1, pDegree + 1];
+        for (int i = 0; i < pDegree; ++i)
         {
-            int expo = splineDegree - i;
+            int expo = pDegree - i;
             matrixT[0, i] = Mathf.Pow(pT, expo);
         }
 
-        matrixT[0, pSplinePoints.Length - 1] = 1;
+        matrixT[0, pDegree] = 1;
         return matrixT;
     }
 
