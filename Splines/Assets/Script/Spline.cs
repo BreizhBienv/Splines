@@ -22,14 +22,16 @@ public class Spline : MonoBehaviour
                 newPos = SplinesHelper.ComputeBézierCurve(m_Tvalue, m_SplinePoints);
                 break;
 
-            case ECurveType.Hermitienne:
-                newPos = SplinesHelper.ComputeHermitian(m_Tvalue, m_SplinePoints);
+            case ECurveType.Hermite:
+                newPos = SplinesHelper.ComputeHermite(m_Tvalue, m_SplinePoints);
                 break;
 
             case ECurveType.B_Spline:
+                newPos = SplinesHelper.ComputeBSplineCurve(m_Tvalue, m_SplinePoints);
                 break;
 
             case ECurveType.Catmull_Rom:
+                newPos = SplinesHelper.ComputeCatmullRomCurve(m_Tvalue, m_SplinePoints);
                 break;
         }
 

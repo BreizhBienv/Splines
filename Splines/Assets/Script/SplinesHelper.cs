@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum ECurveType
 {
-    Hermitienne,
+    Hermite,
     Bézier,
     B_Spline,
     Catmull_Rom,
@@ -12,8 +12,8 @@ public enum ECurveType
 
 public class SplinesHelper
 {
-    #region Hermitian
-    static float[,] M_Hermitian =
+    #region Hermite
+    static float[,] M_Hermite =
     {
         {   2,  -2, 1,  1   },
         {   -3, 3,  -2, -1  },
@@ -21,20 +21,20 @@ public class SplinesHelper
         {   1,  0,  0,  0   }
     };
 
-    public static Vector3 ComputeHermitian(float pT, GameObject[] pSplinePoints)
+    public static Vector3 ComputeHermite(float pT, GameObject[] pSplinePoints)
     {
         float[,] T = MatrixT(pT, pSplinePoints);
-        float[,] M = M_Hermitian;
+        float[,] M = M_Hermite;
 
         float[,] matrix_TM = 
             MultiplyMatrices(T, M);
         float[,] matrix_TMG = 
-            MultiplyMatrices(matrix_TM, HermitianControlPoints(pSplinePoints));
+            MultiplyMatrices(matrix_TM, HermiteControlPoints(pSplinePoints));
 
         return new(matrix_TMG[0, 0], matrix_TMG[0, 1], matrix_TMG[0, 2]);
     }
 
-    static float[,] HermitianControlPoints(GameObject[] pSplinePoints)
+    static float[,] HermiteControlPoints(GameObject[] pSplinePoints)
     {
         Vector3 entry = pSplinePoints.First().transform.position;
         Vector3 exit = pSplinePoints.Last().transform.position;
@@ -104,6 +104,37 @@ public class SplinesHelper
         {   -3,  0, 3,  0   },
         {   1,  4,  1,  0   }
     };
+
+    public static Vector3 ComputeBSplineCurve(float pT, GameObject[] pSplinePoints)
+    {
+        float[,] T = MatrixT(pT, pSplinePoints);
+        float[,] M = M_B_Spline;
+
+        float[,] matrix_TM =
+            MultiplyMatrices(T, M);
+        float[,] matrix_TMG =
+            MultiplyMatrices(matrix_TM, BSplineControlPoints(pSplinePoints));
+
+        Vector3 result = new(matrix_TMG[0, 0], matrix_TMG[0, 1], matrix_TMG[0, 2]);
+
+        return result / 6;
+    }
+
+    static float[,] BSplineControlPoints(GameObject[] pSplinePoints)
+    {
+        float[,] controlPoints = new float[pSplinePoints.Length, 3];
+
+        for (int i = 0; i < pSplinePoints.Length; i++)
+        {
+            Vector3 pos = pSplinePoints[i].transform.position;
+
+            controlPoints[i, 0] = pos.x;
+            controlPoints[i, 1] = pos.y;
+            controlPoints[i, 2] = pos.z;
+        }
+
+        return controlPoints;
+    }
     #endregion
 
     #region Catmull_Rom
@@ -114,6 +145,37 @@ public class SplinesHelper
         {   -1,  0, 1,  0   },
         {   0,  2,  0,  0   }
     };
+
+    public static Vector3 ComputeCatmullRomCurve(float pT, GameObject[] pSplinePoints)
+    {
+        float[,] T = MatrixT(pT, pSplinePoints);
+        float[,] M = M_Catmull_Rom;
+
+        float[,] matrix_TM =
+            MultiplyMatrices(T, M);
+        float[,] matrix_TMG =
+            MultiplyMatrices(matrix_TM, CatmullRomControlPoints(pSplinePoints));
+
+        Vector3 result = new(matrix_TMG[0, 0], matrix_TMG[0, 1], matrix_TMG[0, 2]);
+
+        return result / 2;
+    }
+
+    static float[,] CatmullRomControlPoints(GameObject[] pSplinePoints)
+    {
+        float[,] controlPoints = new float[pSplinePoints.Length, 3];
+
+        for (int i = 0; i < pSplinePoints.Length; i++)
+        {
+            Vector3 pos = pSplinePoints[i].transform.position;
+
+            controlPoints[i, 0] = pos.x;
+            controlPoints[i, 1] = pos.y;
+            controlPoints[i, 2] = pos.z;
+        }
+
+        return controlPoints;
+    }
     #endregion
 
     static float[,] MatrixT(float pT, GameObject[] pSplinePoints)
