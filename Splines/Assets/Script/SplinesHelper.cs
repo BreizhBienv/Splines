@@ -38,14 +38,13 @@ public class SplinesHelper
 
     static float[,] HermiteControlPoints(Vector3[] pPoints)
     {
-        Vector3 entry = pPoints.First();
-        Vector3 exit = pPoints.Last();
+        Vector3 entry       = pPoints[0];
+        Vector3 entryTan    = pPoints[1];
+        Vector3 exit        = pPoints[2];
+        Vector3 exitTan     = pPoints[3];
 
-        Vector3 entryTangent = pPoints[1];
-        Vector3 exitTangent = pPoints[pPoints.Length - 2];
-
-        Vector3 R1 = entryTangent - entry;
-        Vector3 R2 = exitTangent - exit;
+        Vector3 R1 = entryTan - entry;
+        Vector3 R2 = exitTan - exit;
 
         float[,] controlPoints =
         {

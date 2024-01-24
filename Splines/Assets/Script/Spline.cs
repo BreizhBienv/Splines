@@ -38,7 +38,7 @@ public class Spline : MonoBehaviour
                 break;
 
             case ECurveType.Hermite:
-                //newPos = SplinesHelper.ComputeHermite(t, pPoints);
+                newPos = GetHermitePoint();
                 break;
 
             case ECurveType.B_Spline:
@@ -46,11 +46,28 @@ public class Spline : MonoBehaviour
                 break;
 
             case ECurveType.Catmull_Rom:
-                //newPos = SplinesHelper.ComputeCatmullRomCurve(t, pPoints);
+                newPos = GetCatmullRomPoint();
                 break;
         }
 
         return newPos;
+    }
+
+    private Vector3 GetHermitePoint()
+    {
+        int bézierCounter = (m_CurveCounter * 3) % (m_SplinePoints.Count - 1);
+
+        Vector3[] curve =
+        {
+            m_SplinePoints[bézierCounter],
+            m_SplinePoints[bézierCounter + 1],
+            m_SplinePoints[bézierCounter + 2],
+            m_SplinePoints[bézierCounter + 3],
+        };
+
+        Vector3 pos = SplinesHelper.ComputeHermite(m_Tvalue, curve);
+
+        return pos;
     }
 
     private Vector3 GetBézierPoint()
@@ -87,32 +104,21 @@ public class Spline : MonoBehaviour
         return pos;
     }
 
-    public Vector3 GetPointEditor(float pT, Vector3[] pPoints)
+    private Vector3 GetCatmullRomPoint()
     {
-        Vector3 newPos = Vector3.zero;
-        float t = Mathf.Clamp01(pT);
+        int bSplineCounter = m_CurveCounter % (m_SplinePoints.Count - 3);
 
-        switch (m_CurveType)
+        Vector3[] curve =
         {
-            default:
-            case ECurveType.Bézier:
-                newPos = SplinesHelper.ComputeBézierCurve(t, pPoints);
-                break;
+            m_SplinePoints[bSplineCounter],
+            m_SplinePoints[bSplineCounter + 1],
+            m_SplinePoints[bSplineCounter + 2],
+            m_SplinePoints[bSplineCounter + 3],
+        };
 
-            case ECurveType.Hermite:
-                newPos = SplinesHelper.ComputeHermite(t, pPoints);
-                break;
+        Vector3 pos = SplinesHelper.ComputeCatmullRomCurve(m_Tvalue, curve);
 
-            case ECurveType.B_Spline:
-                newPos = SplinesHelper.ComputeBSplineCurve(t, pPoints);
-                break;
-
-            case ECurveType.Catmull_Rom:
-                newPos = SplinesHelper.ComputeCatmullRomCurve(t, pPoints);
-                break;
-        }
-
-        return newPos;
+        return pos;
     }
 
     public void AddCurve()
