@@ -42,7 +42,7 @@ public class Spline : MonoBehaviour
                 break;
 
             case ECurveType.B_Spline:
-                //newPos = SplinesHelper.ComputeBSplineCurve(t, pPoints);
+                newPos = GetBSplinePoint();
                 break;
 
             case ECurveType.Catmull_Rom:
@@ -72,7 +72,19 @@ public class Spline : MonoBehaviour
 
     private Vector3 GetBSplinePoint()
     {
-        return Vector3.back;
+        int bSplineCounter = m_CurveCounter % (m_SplinePoints.Count - 3);
+
+        Vector3[] curve =
+        {
+            m_SplinePoints[bSplineCounter],
+            m_SplinePoints[bSplineCounter + 1],
+            m_SplinePoints[bSplineCounter + 2],
+            m_SplinePoints[bSplineCounter + 3],
+        };
+
+        Vector3 pos = SplinesHelper.ComputeBSplineCurve(m_Tvalue, curve);
+
+        return pos;
     }
 
     public Vector3 GetPointEditor(float pT, Vector3[] pPoints)

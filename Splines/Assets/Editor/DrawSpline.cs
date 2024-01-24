@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using static System.Security.Cryptography.ECCurve;
 
 [CustomEditor(typeof(Spline))]
 public class DrawSpline : Editor
@@ -52,6 +53,30 @@ public class DrawSpline : Editor
 
         Handles.color = Color.red;
 
+        switch (be.m_CurveType)
+        {
+            default:
+            case ECurveType.Bézier:
+                DisplayBézier();
+                break;
+
+            case ECurveType.Hermite:
+                DisplayHermite();
+                break;
+
+            case ECurveType.B_Spline:
+                DiplayBSpline();
+                break;
+
+            case ECurveType.Catmull_Rom:
+                DisplayCatmullRom();
+                break;
+        }
+    }
+
+    #region DiplaySpline
+    private void DisplayBézier()
+    {
         for (int i = 0; i < be.m_SplinePoints.Count - 1; i += 3)
         {
             Vector3[] curve =
@@ -62,15 +87,48 @@ public class DrawSpline : Editor
                     be.m_SplinePoints[i + 3],
             };
 
-            Vector3 lineStart = be.GetPointEditor(0f, curve);
+            Vector3 lineStart = SplinesHelper.ComputeBézierCurve(0f, curve);
             for (int j = 1; j <= lineSteps; ++j)
             {
-                Vector3 lineEnd = be.GetPointEditor(j / (float)lineSteps, curve);
+                Vector3 lineEnd = SplinesHelper.ComputeBézierCurve(j / (float)lineSteps, curve);
                 Handles.DrawLine(lineStart, lineEnd, 2f);
                 lineStart = lineEnd;
             }
         }
     }
+
+    private void DisplayHermite()
+    {
+
+    }
+
+    private void DiplayBSpline()
+    {
+        for (int i = 0; i < be.m_SplinePoints.Count - 3; ++i)
+        {
+            Vector3[] curve =
+            {
+                    be.m_SplinePoints[i],
+                    be.m_SplinePoints[i + 1],
+                    be.m_SplinePoints[i + 2],
+                    be.m_SplinePoints[i + 3],
+            };
+
+            Vector3 lineStart = SplinesHelper.ComputeBSplineCurve(0f, curve);
+            for (int j = 1; j <= lineSteps; ++j)
+            {
+                Vector3 lineEnd = SplinesHelper.ComputeBSplineCurve(j / (float)lineSteps, curve);
+                Handles.DrawLine(lineStart, lineEnd, 2f);
+                lineStart = lineEnd;
+            }
+        }
+    }
+
+    private void DisplayCatmullRom()
+    {
+
+    }
+    #endregion
 
     public override void OnInspectorGUI()
     {
