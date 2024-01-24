@@ -123,6 +123,57 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &257934693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 257934695}
+  - component: {fileID: 257934694}
+  m_Layer: 0
+  m_Name: Spline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &257934694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 257934693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5be762933d9240846b0cb807fa2a8552, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SplinePoints:
+  - {x: -40.780872, y: 0, z: -31.136906}
+  - {x: -11.273698, y: 0, z: -0.1847744}
+  - {x: 0, y: 0, z: -20}
+  - {x: 10, y: 0, z: -10}
+  m_CurveType: 2
+  m_MovingGO: {fileID: 298338273}
+--- !u!4 &257934695
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 257934693}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 75.8, y: 0, z: -26.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &298338273
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,7 +384,7 @@ GameObject:
   - component: {fileID: 917777307}
   - component: {fileID: 917777308}
   m_Layer: 0
-  m_Name: Spline
+  m_Name: Spline (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,7 +399,7 @@ Transform:
   m_GameObject: {fileID: 917777306}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 75.8, y: 0, z: -26.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -367,11 +418,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SplinePoints:
-  - {x: -20, y: 0, z: -10}
-  - {x: -20, y: 0, z: 0}
-  - {x: 20, y: 0, z: 0}
-  - {x: 20, y: 0, z: 10}
-  m_CurveType: 0
+  - {x: 0, y: 0, z: -20}
+  - {x: 10, y: 0, z: -10}
+  - {x: 30, y: 0, z: -20}
+  - {x: 50, y: 0, z: -10}
+  m_CurveType: 2
   m_MovingGO: {fileID: 298338273}
 --- !u!1 &963194225
 GameObject:
@@ -472,4 +523,5 @@ SceneRoots:
   - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 298338277}
+  - {fileID: 257934695}
   - {fileID: 917777307}
