@@ -1,12 +1,13 @@
-using System;
-using System.Security.Cryptography;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(HermitianSpline))]
-public class DrawHermitianSpline : Editor
+
+[CustomEditor(typeof(BSpline))]
+public class DrawBSpline : Editor
 {
-    private HermitianSpline Spline;
+    private BSpline Spline;
     Transform HandleTransform;
     Quaternion HandleRot;
 
@@ -19,32 +20,32 @@ public class DrawHermitianSpline : Editor
 
     void OnSceneGUI()
     {
-        Spline = target as HermitianSpline;
+        Spline = target as BSpline;
         if (Spline == null)
             return;
 
         HandleTransform = Spline.transform;
-        HandleRot       = Spline.transform.rotation;
+        HandleRot = Spline.transform.rotation;
 
         if (Spline.ControlPointCount < 4)
             return;
 
         DisplayPoints();
-        DisplayHermite();
+        DiplayBSpline();
     }
 
     private void DisplayPoints()
     {
-        for (int i = 0; i < Spline.ControlPointCount - 1; i += 2)
+        Vector3 p0 = ShowPoint(0);
+        for (int i = 1; i <= Spline.ControlPointCount - 1; ++i)
         {
             int ctrId = i;
-            int tanId = i + 1;
 
-            Vector3 p0 = ShowPoint(ctrId);
-            Vector3 p1 = ShowPoint(tanId);
+            Vector3 p1 = ShowPoint(ctrId);
 
             Handles.color = Color.gray;
             Handles.DrawDottedLine(p0, p1, 5);
+            p0 = p1;
         }
     }
 
@@ -75,35 +76,34 @@ public class DrawHermitianSpline : Editor
         return point;
     }
 
-    private void DisplayHermite()
+    private void DiplayBSpline()
     {
         Handles.color = Color.red;
-        for (int i = 0; i < Spline.ControlPointCount - 3; i += 2)
+        for (int i = 0; i < Spline.ControlPointCount - 3; ++i)
         {
             Vector3[] curve =
             {
-                HandleTransform.TransformPoint(Spline.GetControlPoint(i)),
-                HandleTransform.TransformPoint(Spline.GetControlPoint(i + 1)),
-                HandleTransform.TransformPoint(Spline.GetControlPoint(i + 2)),
-                HandleTransform.TransformPoint(Spline.GetControlPoint(i + 3)),
+                   HandleTransform.TransformPoint(Spline.GetControlPoint(i)),
+                   HandleTransform.TransformPoint(Spline.GetControlPoint(i + 1)),
+                   HandleTransform.TransformPoint(Spline.GetControlPoint(i + 2)),
+                   HandleTransform.TransformPoint(Spline.GetControlPoint(i + 3)),
             };
 
-            Vector3 lineStart = SplinesHelper.ComputeHermite(0f, curve);
+            Vector3 lineStart = SplinesHelper.ComputeBSplineCurve(0f, curve);
             for (int j = 1; j <= lineSteps; ++j)
             {
-                Vector3 lineEnd = SplinesHelper.ComputeHermite(j / (float)lineSteps, curve);
+                Vector3 lineEnd = SplinesHelper.ComputeBSplineCurve(j / (float)lineSteps, curve);
                 Handles.DrawLine(lineStart, lineEnd, 2f);
                 lineStart = lineEnd;
             }
         }
     }
-
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        HermitianSpline spl = target as HermitianSpline;
-        
+        BSpline spl = target as BSpline;
+
         if (SelectedIndex >= 0 && SelectedIndex < Spline.ControlPointCount)
             DrawSelectedPointInspector();
 

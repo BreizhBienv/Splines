@@ -27,11 +27,10 @@ public class DrawBézierSpline : Editor
         HandleTransform = Spline.transform;
         HandleRot = Spline.transform.rotation;
 
-        DisplayPoints();
-
         if (Spline.ControlPointCount < 4)
             return;
 
+        DisplayPoints();
         DisplayBézier();
     }
 
@@ -95,10 +94,10 @@ public class DrawBézierSpline : Editor
         {
             Vector3[] curve =
             {
-                    Spline.GetControlPoint(i),
-                    Spline.GetControlPoint(i + 1),
-                    Spline.GetControlPoint(i + 2),
-                    Spline.GetControlPoint(i + 3),
+                   HandleTransform.TransformPoint(Spline.GetControlPoint(i)),
+                   HandleTransform.TransformPoint(Spline.GetControlPoint(i + 1)),
+                   HandleTransform.TransformPoint(Spline.GetControlPoint(i + 2)),
+                   HandleTransform.TransformPoint(Spline.GetControlPoint(i + 3)),
             };
 
             Vector3 lineStart = SplinesHelper.ComputeBézierCurve(0f, curve);
