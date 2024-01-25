@@ -1,5 +1,5 @@
 # Splines
-Unity project to learn how to implement splines, using matrices, and getting familiar with Unity Editor scripting.
+Unity project to learn how to implement splines, using matrices, and getting familiar with Unity Editor scripting.  
 This project was realized at Isart digital in January 2024, 2 weeks was given to make it.
 
 Editor Scripting sources:
@@ -9,7 +9,7 @@ Spline computation and junction sources:
 > Isart Digital's lessons
 
 ### Parameter:
-Since Hermitian and Bézier splines use tangent, when moving a control point, it's tangents follow.
+Since Hermitian and Bézier splines use tangent, when moving a control point, it's tangents follow.  
 Bézier spline: a points tangents are mirrored, in position and distance.
 
 As parameters, each Spline had:
