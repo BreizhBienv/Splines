@@ -1,12 +1,13 @@
 using System;
-using System.Security.Cryptography;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(HermitianSpline))]
-public class DrawHermitianSpline : Editor
+[CustomEditor(typeof(BézierSpline))]
+public class DrawBézierSpline : Editor
 {
-    private HermitianSpline Spline;
+    private BézierSpline Spline;
     Transform HandleTransform;
     Quaternion HandleRot;
 
@@ -19,33 +20,44 @@ public class DrawHermitianSpline : Editor
 
     void OnSceneGUI()
     {
-        Spline = target as HermitianSpline;
+        Spline = target as BézierSpline;
         if (Spline == null)
             return;
 
         HandleTransform = Spline.transform;
-        HandleRot       = Spline.transform.rotation;
+        HandleRot = Spline.transform.rotation;
 
         DisplayPoints();
 
         if (Spline.ControlPointCount < 4)
             return;
 
-        DisplayHermite();
+        DisplayBézier();
     }
 
     private void DisplayPoints()
     {
-        for (int i = 0; i < Spline.ControlPointCount - 1; i += 2)
+        for (int i = 0; i <= Spline.ControlPointCount - 1; i += 3)
         {
             int ctrId = i;
-            int tanId = i + 1;
+            int prevTanID = i - 1;
+            int nextTanId = i + 1;
 
             Vector3 p0 = ShowPoint(ctrId);
-            Vector3 p1 = ShowPoint(tanId);
 
-            Handles.color = Color.gray;
-            Handles.DrawDottedLine(p0, p1, 5);
+            if (prevTanID >= 0)
+            {
+                Vector3 t0 = ShowPoint(prevTanID);
+                Handles.color = Color.gray;
+                Handles.DrawDottedLine(p0, t0, 5);
+            }
+
+            if (nextTanId <= Spline.ControlPointCount - 1)
+            {
+                Vector3 t1 = ShowPoint(nextTanId);
+                Handles.color = Color.gray;
+                Handles.DrawDottedLine(p0, t1, 5);
+            }
         }
     }
 
@@ -76,35 +88,34 @@ public class DrawHermitianSpline : Editor
         return point;
     }
 
-    private void DisplayHermite()
+    private void DisplayBézier()
     {
         Handles.color = Color.red;
-        for (int i = 0; i < Spline.ControlPointCount - 3; i += 2)
+        for (int i = 0; i < Spline.ControlPointCount - 3; i += 3)
         {
             Vector3[] curve =
             {
-                HandleTransform.TransformPoint(Spline.GetControlPoint(i)),
-                HandleTransform.TransformPoint(Spline.GetControlPoint(i + 1)),
-                HandleTransform.TransformPoint(Spline.GetControlPoint(i + 2)),
-                HandleTransform.TransformPoint(Spline.GetControlPoint(i + 3)),
+                    Spline.GetControlPoint(i),
+                    Spline.GetControlPoint(i + 1),
+                    Spline.GetControlPoint(i + 2),
+                    Spline.GetControlPoint(i + 3),
             };
 
-            Vector3 lineStart = SplinesHelper.ComputeHermite(0f, curve);
+            Vector3 lineStart = SplinesHelper.ComputeBézierCurve(0f, curve);
             for (int j = 1; j <= lineSteps; ++j)
             {
-                Vector3 lineEnd = SplinesHelper.ComputeHermite(j / (float)lineSteps, curve);
+                Vector3 lineEnd = SplinesHelper.ComputeBézierCurve(j / (float)lineSteps, curve);
                 Handles.DrawLine(lineStart, lineEnd, 2f);
                 lineStart = lineEnd;
             }
         }
     }
-
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        HermitianSpline spl = target as HermitianSpline;
-        
+        BézierSpline spl = target as BézierSpline;
+
         if (SelectedIndex >= 0 && SelectedIndex < Spline.ControlPointCount)
             DrawSelectedPointInspector();
 

@@ -25,6 +25,12 @@ public class HermitianSpline : MonoBehaviour
 
     public void SetControlPoint(int index, Vector3 point)
     {
+        if (index % 2 == 0)
+        {
+            Vector3 delta = point - m_Points[index];
+            m_Points[index + 1] += delta;
+        }
+
         m_Points[index] = point;
     }
 
